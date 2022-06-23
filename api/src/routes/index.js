@@ -26,7 +26,7 @@ const getAPI = async () => {
             descripcion: i.descripcion,
 
             //map de generos y de plataformas , xq devuelve un arreglo
-            genres: i.genres.map(i => i.name),  //array con los generos string
+            generos: i.genres.map(i => i.name),  //array con los generos string
             platforms: i.platforms.map(p => p.platform.name) //array con los generos string
         }
     })
@@ -35,7 +35,7 @@ const getAPI = async () => {
 
 //TRAIGO DE LA BD
 const getDB = async () => {
-    return await Videogame.findAll({
+    const infoDB = await Videogame.findAll({
         include: {
             model: Genero,
             attributes: ['name'],
@@ -45,12 +45,24 @@ const getDB = async () => {
             }
         }
     })
+    //console.log(infoDB)
+    //console.log(infoDB[0].generos[0].dataValues.name)
+    //console.log(infoDB[0].generos) arreglo
+    console.log("antes del map",infoDB)
+    infoDB.map(v => {
+        (v.dataValues["generos"] = v.dataValues["generos"].map(g => g.dataValues.name))
+            
+    })
+    console.log("despues del map",infoDB)
+    return infoDB
 };
 
 //concatenar lo de la api y la bd
 const getVideogames = async () => {
     const infoApi = await getAPI();
     const infoDB = await getDB();
+
+    
     const informacion = infoApi.concat(infoDB);
     return informacion;
 };
@@ -72,10 +84,11 @@ router.get('/videogames', async (req, res) => {
     }
 });
 
+// CREAR JUEGO
 router.post('/videogames', async (req, res) => {
-    let { name, descripcion, relased, rating, platforms, genres, createdInDb } = req.body;
+    let { name, descripcion, relased, rating, platforms, generos, createdInDb } = req.body;
 
-    platforms = platforms?.join(', ')
+    platforms = platforms.join(', ')
 
     try {
         const videogameCreated = await Videogame.findOrCreate({
@@ -88,11 +101,11 @@ router.post('/videogames', async (req, res) => {
                 createdInDb
             }
         })
-        let generoDb = await Genero.findAll({
-            where : {name : genres}
-        })
+/*         let generoDb = await Genero.findAll({
+            where : {name : genero}
+        }) */
 
-        await videogameCreated[0].addGenero(generoDb)
+        await videogameCreated[0].addGenero(generos)
 
     }
     catch (e) {
@@ -112,8 +125,25 @@ router.get('/videogame/:id', async (req, res) => {
 })
 
 //GENEROS
-/* router.get('/genres', async (req, res) => {
-
-}) */
+router.get('/genres', async (req, res) => {
+    try {
+        let generos = (await axios.get(`https://api.rawg.io/api/genres?key=${apiKey}`)).data.results;
+        //console.log(generos) //[sport , card , car]
+        //los guardo en la BD solo el nomnbre
+        generos.forEach(async e=> {
+            await Genero.findOrCreate({
+                where: {
+                    name: e.name  //.toLowerCase()
+                }
+            })
+        })
+        const generosDB = await Genero.findAll();
+        //console.log("guardado en DB");
+        res.send(generosDB);
+    }
+    catch(e){
+        res.send(e)     //para usar el middleware armado en app
+    }
+})
 
 module.exports = router;
