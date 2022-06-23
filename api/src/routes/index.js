@@ -73,7 +73,7 @@ router.get('/videogames', async (req, res) => {
 });
 
 router.post('/videogames', async (req, res) => {
-    let { name, descripcion, relased, rating, image, platforms, genres } = req.body;
+    let { name, descripcion, relased, rating, platforms, genres, createdInDb } = req.body;
 
     platforms = platforms?.join(', ')
 
@@ -83,12 +83,17 @@ router.post('/videogames', async (req, res) => {
                 name,
                 descripcion, 
                 relased, 
-                rating,
-                image, 
-                platforms 
+                rating, 
+                platforms,
+                createdInDb
             }
         })
-        await videogameCreated[0].setGenero(genres)
+        let generoDb = await Genero.findAll({
+            where : {name : genres}
+        })
+
+        await videogameCreated[0].addGenero(generoDb)
+
     }
     catch (e) {
         console.log(e);
@@ -96,6 +101,19 @@ router.post('/videogames', async (req, res) => {
     res.send('video juego creado correctamente')
 })
 
-//RUTA GENERO
+//por ID
+router.get('/videogame/:id', async (req, res) => {
+    const { id } = req.params;
+    const videogamesTotal = await getVideogames()
+    if(id) {
+        let gameId = await videogamesTotal.filter(i => i.id == id)
+        gameId.length ? res.status(200).json(gameId) : res.status(404).send('No se encontro el juego');
+    }
+})
+
+//GENEROS
+/* router.get('/genres', async (req, res) => {
+
+}) */
 
 module.exports = router;
