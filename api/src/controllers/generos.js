@@ -1,4 +1,4 @@
-/* const axios = require('axios');
+const axios = require('axios');
 const apiKey = '8e6a0d3d6edc487097d8fcc85b9e6b10';
 const {Genero} = require("../db.js")
 
@@ -10,7 +10,7 @@ const getGeneroApi= async ()=> {
         generos.map(e=> {
             Genero.findOrCreate({
                 where: {
-                    name: e.toLowerCase()
+                    name: e //toLowerCase()
                 }
             })
         })
@@ -24,4 +24,4 @@ const getGeneroApi= async ()=> {
     }
 };
 
-module.exports = {getGeneroApi} */
+module.exports = {getGeneroApi}

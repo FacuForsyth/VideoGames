@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       unique: true,
     },
-    //un id nuevo para que coincidan bd y api 
+    //un id nuevo para que no coincidan bd y api 
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -32,19 +32,10 @@ module.exports = (sequelize) => {
     platforms: {
       type: DataTypes.STRING,   //.ENUM(plataformas)
       allowNull: false,
-      unique: true,
     },
-    image: {
-      type: DataTypes.STRING,
-      
-    },
-    // juegos creados en mi bd
-    createdInDb: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    }
-  },{timestamps : false});
+  },{timestamps: true,
+    createdAt: 'creado',
+    updatedAt: false});
 };
 
 /* - [ ] Videojuego con las siguientes propiedades:
