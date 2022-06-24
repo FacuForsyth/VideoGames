@@ -17,6 +17,11 @@ describe('Videogame model', () => {
       it('should work when its a valid name', () => {
         Recipe.create({ name: 'Super Mario Bros' });
       });
+      it('should return name not found', done => {
+        Videogame.findAll()
+        .then(r => expect(r[1].name).to.be.false('NameNotFound'))
+        .catch(() => done())
+      });
     });
   });
 });

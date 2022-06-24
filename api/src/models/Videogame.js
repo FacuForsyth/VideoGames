@@ -7,7 +7,9 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+/*       validate: {
+        notNull: true,
+      } */
     },
     //un id nuevo para que no coincidan bd y api 
     id: {
