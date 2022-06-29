@@ -27,7 +27,7 @@ router.get('/videogames', async (req, res) => {
 
 // CREAR JUEGO
 router.post('/videogames', async (req, res) => {
-    let { name, descripcion, relased, rating, platforms, generos } = req.body;
+    let { name, descripcion, relased, rating, image, createdInDb, platforms, generos } = req.body;
     platforms = platforms.join(', ')
 
     try {
@@ -36,7 +36,9 @@ router.post('/videogames', async (req, res) => {
                 name,
                 descripcion, 
                 relased, 
-                rating, 
+                rating,
+                image,  //agregar en el req.body 
+                createdInDb, //tiene un defaultValue: true por eso la crea en true
                 platforms,
             }
         })
@@ -53,9 +55,9 @@ router.post('/videogames', async (req, res) => {
 });
 
 //por ID
-router.get('/videogame/:id', async (req, res) => {
+router.get('/videogames/:id', async (req, res) => {
     const { id } = req.params;
-    const videogamesTotal = await getVideogames()
+    const videogamesTotal = await getVideogames();
     if(id) {
         let gameId = await videogamesTotal.filter(i => i.id == id)
         gameId.length ? res.status(200).json(gameId) : res.status(404).send('No se encontro el juego');

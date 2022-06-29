@@ -27,13 +27,25 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     rating : {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(4,2), // el numero decimal puede tener 4 dígitos como máximo y de esos 4 digitos 2 se encuentran después de la coma,
       allowNull: true,
+      /* validate: {
+        min: 0,
+        max: 10
+      } */
     },
-    //crear otro modelo para plataformas
+    image:{
+      type: DataTypes.TEXT,
+      defaultValue: "https://img.freepik.com/vector-gratis/controles-videojuegos-estilo-neon-pared-ladrillo_24908-58916.jpg"
+    },
     platforms: {
-      type: DataTypes.STRING,   //.ENUM(plataformas)
+      type: DataTypes.STRING, //.ENUM('PC', 'Nintendo Switch', 'Xbox Series S/X', 'PlayStation 4', 'PlayStation 5')
       allowNull: false,
+    },
+    createdInDb: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
     },
   },{timestamps: true,
     createdAt: 'creado',
