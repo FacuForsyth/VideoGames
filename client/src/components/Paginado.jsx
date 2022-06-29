@@ -4,8 +4,8 @@ import '../css/paginado.css';
 export default function Paginado({videogamesPage, allVideogames, paginado}) {
     const pageNumbers = [];
     
-    for (let i = 0; i <= Math.ceil(allVideogames/videogamesPage); i++) {
-        pageNumbers.push(i + 1) // +1 para que no aparezca en el paginado el 0
+    for (let i = 1; i <= Math.ceil(allVideogames/videogamesPage); i++) {
+        pageNumbers.push(i) // +1 para que no aparezca en el paginado el 0
     };
 
     return(

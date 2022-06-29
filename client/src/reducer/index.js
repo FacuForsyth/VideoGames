@@ -1,6 +1,8 @@
 const initialState = {
     videogames: [],
-    allVideogames: [],  
+    allVideogames: [],
+    generos: [],
+    detail: []  
 }
 
 function rootReducer (state = initialState, action) {
@@ -11,6 +13,25 @@ function rootReducer (state = initialState, action) {
                  videogames: action.payload,
                  allVideogames: action.payload
             }
+        case 'GET_NAME_VIDEOGAMES':
+            return{
+                ...state,
+                videogames: action.payload,
+            }
+        case 'GET_GENEROS':
+            return{
+                ...state,
+                generos: action.payload,
+            };
+        case 'GET_DETAILS':
+            return{
+                ...state,
+                detail: action.payload,
+            }
+        case 'POST_VIDEOGAME':
+            return{
+                ...state,
+            };
         case 'FILTER_CREATED':
             const allVideogames2 = state.allVideogames
             const createdFilter = action.payload === 'DB' ? 
@@ -19,7 +40,7 @@ function rootReducer (state = initialState, action) {
             return{
                 ...state,
                 videogames: action.payload === 'ALL' ? state.allVideogames : createdFilter
-            }
+            };
         case 'ORDER_NAME':
             let sortedArr = action.payload === "A-Z" ?
             //sort para comparar 2 valores de la function
@@ -36,7 +57,24 @@ function rootReducer (state = initialState, action) {
             return {
                 ...state,
                 videogames: sortedArr
-            }
+            };
+        case 'ORDER_RATING':
+            let ratingArr = action.payload === "asc" ?
+            //sort para comparar 2 valores de la function
+                state.videogames.sort(function(a, b) {
+                    if(a.rating > b.rating) { return 1 };
+                    if(b.rating > a.rating) { return -1 };
+                    return 0;
+                }) :
+                state.videogames.sort(function(a, b) {
+                    if(a.rating > b.rating) { return -1 };
+                    if(b.rating > a.rating) { return 1 };
+                    return 0;
+                });
+            return {
+                ...state,
+                videogames: ratingArr
+            };    
 
         default:
             return state;

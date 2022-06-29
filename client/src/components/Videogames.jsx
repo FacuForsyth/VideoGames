@@ -1,17 +1,22 @@
 import React from "react";
+//importo los hocks que voy a usar de react
 import { useState, useEffect } from "react";
+//importo los hocks de react-redux
 import { useDispatch, useSelector } from "react-redux";
-import { getVideogames, filterCreated, orderName } from "../actions";
+//importo las actions que voy a usar en este componente
+import { getVideogames, filterCreated, orderName, orderRating } from "../actions";
 import { Link } from "react-router-dom";
+//importo los componentes que voy a usar
 import Videogame from "./Videogame";
 import Paginado from "./Paginado";
+import SearchBar from "./SearchBar";
 
 export default function Videogames() {
   //ir despachando las acciones
   const dispatch = useDispatch();
   //traer todo lo que esta en el estado de videogames
   const allVideogames = useSelector((state) => state.videogames);
-  const [order, setOrder] = useState('');
+  const [setOrder] = useState('');
   //empieza en la pag
   const [currentPage, setCurrentPage] = useState(1);
   //cuantos juegos por pagina
@@ -39,7 +44,9 @@ export default function Videogames() {
   };
 
   function handleFilterCreated(e){
+    setCurrentPage(1);
     dispatch(filterCreated(e.target.value))  //value es el payload
+
   };
 
   function handleSort(e) {
@@ -47,6 +54,13 @@ export default function Videogames() {
     dispatch(orderName(e.target.value))
     setCurrentPage(1);  //setea para que empieze en la pagina 1
     setOrder(`Orden ${e.target.value}`)     //estado local para que lo setee
+  }
+
+  function handleRating(e) {
+    e.preventDefault();
+    dispatch(orderRating(e.target.value))
+    setCurrentPage(1);  //setea para que empieze en la pagina 1
+    setOrder(`OrdenR ${e.target.value}`)     //estado local para que lo setee
   }
 
   return (
@@ -58,7 +72,7 @@ export default function Videogames() {
         }}>Volver a cargar videojuegos
       </button>
 
-      <div>
+      <div className="filtros">
         <select onChange={e => handleFilterCreated(e)}>
           <option value="ALL">TODOS LOS JUEGOS</option>
           <option value="API">JUEGOS POR API</option>
@@ -68,25 +82,30 @@ export default function Videogames() {
           <option value="A-Z">A - Z</option>
           <option value="Z-A">Z - A</option>
         </select>
-        <select>
+        <select onChange={e => handleRating(e)}>
           <option value="asc">Mayor a Menor</option>
           <option value="desc">Menor a Mayor</option>
         </select>
-        
+      </div>  
+
+      <div>
         <Paginado
           videogamesPage={videogamesPage}
           allVideogames={allVideogames.length}
           paginado={paginado}
         />
 
+        <SearchBar/>
+      </div>
+
         {currentVideogames?.map((e) => {
           return (
             <div>
               <Link to={"/videogames/" + e.id}>
                 <Videogame
-                  image={e.image}
+                  image={e.image ? e.image : e.img}
                   name={e.name}
-                  generos={e.generos}
+                  generos={e.generos + ' '}
                   key={e.id}
                />
               </Link>
@@ -94,7 +113,7 @@ export default function Videogames() {
           );
          })
         }
-      </div>
+      
     </div>
   );
 };
