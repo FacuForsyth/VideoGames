@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 //importo los hocks de react-redux
 import { useDispatch, useSelector } from "react-redux";
 //importo las actions que voy a usar en este componente
-import { getVideogames, filterCreated, orderName, orderRating } from "../actions";
+import { getVideogames, filterCreated, orderName, orderRating, filterGeneros, getGeneros } from "../actions";
 import { Link } from "react-router-dom";
 //importo los componentes que voy a usar
 import Videogame from "./Videogame";
@@ -16,9 +16,13 @@ export default function Videogames() {
   const dispatch = useDispatch();
   //traer todo lo que esta en el estado de videogames
   const allVideogames = useSelector((state) => state.videogames);
-  const [setOrder] = useState('');
+  const generos = useSelector((state) => state.generos);
+  const [order, setOrder] = useState('')
   //empieza en la pag
   const [currentPage, setCurrentPage] = useState(1);
+      //console.log('curr:', currentPage)
+    //console.log('setcc:', setCurrentPage)
+
   //cuantos juegos por pagina
   const [videogamesPage] = useState(15);
   //indice para el ultimo juego
@@ -36,10 +40,12 @@ export default function Videogames() {
   //component did mounth
   useEffect(() => {
     dispatch(getVideogames());
+    dispatch(getGeneros());
   }, [dispatch]);
   //para el boton de resetear los videojuegos
   function handleClick(e) {
     e.preventDefault(); //para que no se rompa por las dudas
+    setCurrentPage(1);
     dispatch(getVideogames());
   };
 
@@ -61,18 +67,26 @@ export default function Videogames() {
     dispatch(orderRating(e.target.value))
     setCurrentPage(1);  //setea para que empieze en la pagina 1
     setOrder(`OrdenR ${e.target.value}`)     //estado local para que lo setee
-  }
+  };
+
+   function handleFilterGenero(e){
+    e.preventDefault();
+    setCurrentPage(1);
+    dispatch(filterGeneros(e.target.value))
+  };
 
   return (
     <div>
-      <Link to="/videogame">Crear VideoJuego</Link>
+      <Link to="/videogame">Crea tu Juego!</Link>
       <h1>JUEGOSTECA</h1>
-      <button onClick={(e) => {
-          handleClick(e);
-        }}>Volver a cargar videojuegos
-      </button>
+      <button onClick={e => handleClick(e)}>Volver a cargar videojuegos</button>
 
       <div className="filtros">
+      <select onChange={e=> handleFilterGenero(e)}>
+                    {generos.map((o) => {
+                        return <option value={o.name} key={o.id}>{o.name}</option>
+                    })}
+        </select>
         <select onChange={e => handleFilterCreated(e)}>
           <option value="ALL">TODOS LOS JUEGOS</option>
           <option value="API">JUEGOS POR API</option>
@@ -86,9 +100,7 @@ export default function Videogames() {
           <option value="asc">Mayor a Menor</option>
           <option value="desc">Menor a Mayor</option>
         </select>
-      </div>  
 
-      <div>
         <Paginado
           videogamesPage={videogamesPage}
           allVideogames={allVideogames.length}
@@ -98,22 +110,27 @@ export default function Videogames() {
         <SearchBar/>
       </div>
 
+      <div className="games-div">
         {currentVideogames?.map((e) => {
           return (
-            <div>
               <Link to={"/videogames/" + e.id}>
                 <Videogame
-                  image={e.image ? e.image : e.img}
                   name={e.name}
-                  generos={e.generos + ' '}
+                  image={e.image}
+                  rating={e.rating}
+                  relased={e.relased}
+                  generos={e.generos.join(', ')}
                   key={e.id}
-               />
+               ></Videogame>
               </Link>
-            </div>
+            
           );
          })
         }
-      
+      </div>
     </div>
   );
 };
+
+//PARA PONER UNA IMAGEN POR DEFAULT
+//e.image ? e.image : <img src="https://img.freepik.com/vector-gratis/controles-videojuegos-estilo-neon-pared-ladrillo_24908-58916.jpg"}

@@ -49,6 +49,16 @@ export function postVideogame(payload) {
     }
 };
 
+export function filterGeneros(genero) {
+    return function (dispatch) {
+        dispatch({
+            type: "FILTER_GENERO", 
+            payload: genero
+        })
+        //console.log(genero) //SI TRAE EL GENERO SELECCIONADO
+      }
+}
+
 export function filterCreated(payload){
     return{
         type: 'FILTER_CREATED',
@@ -70,10 +80,12 @@ export function orderRating(payload){
     }
 };
 
-export function getDetail(id){
+export function getDetails(id){
+    
     return async function(dispatch){
         try{
-            var info = await axios.get(`http://localhost:3001/videogames/` + id);
+            var info = await axios.get(`http://localhost:3001/videogames/${id}`);
+            console.log('esto es info:', info)
             return dispatch({
                 type: 'GET_DETAILS',
                 payload: info.data

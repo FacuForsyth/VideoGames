@@ -2,7 +2,7 @@ const initialState = {
     videogames: [],
     allVideogames: [],
     generos: [],
-    detail: []  
+    details: {}  
 }
 
 function rootReducer (state = initialState, action) {
@@ -26,11 +26,24 @@ function rootReducer (state = initialState, action) {
         case 'GET_DETAILS':
             return{
                 ...state,
-                detail: action.payload,
+                details: action.payload
             }
         case 'POST_VIDEOGAME':
             return{
                 ...state,
+            };
+        case "FILTER_GENERO":
+            //console.log('filtered', action.payload)  SI TRAE EL GENERO
+            var juegos = state.allVideogames.filter((game)=> {
+                 return game.generos.find((g)=> {
+                    return action.payload === g
+                    })
+                })
+            console.log(juegos) //OK, TRAE TODOS LOS JUEGOS FILTRADOS
+            //console.log(action.payload)   es el genero
+            return {
+                ...state,
+                videogames: juegos
             };
         case 'FILTER_CREATED':
             const allVideogames2 = state.allVideogames
@@ -42,16 +55,17 @@ function rootReducer (state = initialState, action) {
                 videogames: action.payload === 'ALL' ? state.allVideogames : createdFilter
             };
         case 'ORDER_NAME':
-            let sortedArr = action.payload === "A-Z" ?
+        console.log(state.videogames)    
+        let sortedArr = action.payload === "A-Z" ?
             //sort para comparar 2 valores de la function
                 state.videogames.sort(function(a, b) {
-                    if(a.name > b.name) { return 1 };
-                    if(b.name > a.name) { return -1 };
+                    if(a.name.toLowerCase() > b.name.toLowerCase()) { return 1 };
+                    if(b.name.toLowerCase() > a.name.toLowerCase()) { return -1 };
                     return 0;
                 }) :
                 state.videogames.sort(function(a, b) {
-                    if(a.name > b.name) { return -1 };
-                    if(b.name > a.name) { return 1 };
+                    if(a.name.toLowerCase() > b.name.toLowerCase()) { return -1 };
+                    if(b.name.toLowerCase() > a.name.toLowerCase()) { return 1 };
                     return 0;
                 });
             return {
@@ -82,3 +96,15 @@ function rootReducer (state = initialState, action) {
 };
 
 export default rootReducer; 
+
+
+/*
+filtro si es string 
+let allGames = state.allGames;
+      let gamesFiltered =
+        allGames && allGames.filter((g) => g.genres.includes(action.payload));
+      return {
+        ...state,
+        games: gamesFiltered,
+      };
+*/

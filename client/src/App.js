@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom'
 import LandingPage from './components/Landing';
 import Videogames from './components/Videogames';
 import GameCreate from './components/GameCreate';
+import Detail from './components/Detail';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
          <Route exact path= '/' component={LandingPage} />
          <Route exact path= '/videogames' component={Videogames} />
          <Route exact path= '/videogame' component={GameCreate} />
-
+         <Route exact path= '/videogames/:id' component={Detail} />
       </Switch>
     </div>
 

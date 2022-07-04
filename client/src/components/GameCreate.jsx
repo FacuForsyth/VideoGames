@@ -10,6 +10,10 @@ function validate(input){
         errors.name = 'Ingresar un nombre';
     } else if(!input.descripcion) {
         errors.descripcion = 'El juego debe contener una descripcion';
+    } else if (!input.rating) {
+        errors.rating = 'Ingresar numero de Rating';
+    } else if (!/^[1-5]$/.test(input.rating)) {
+        errors.rating = 'El numero de Rating debe ser entre 0-5';
     }
     return errors;
 }
@@ -52,7 +56,7 @@ export default function GameCreate(){
         if(e.target.checked){   //true o false
             setInput({
                 ...input,
-                platforms: [...input.platforms + e.target.value]
+                platforms: [...input.platforms, e.target.value]
                 //platforms.join(', ')
             })
         }
@@ -122,12 +126,23 @@ export default function GameCreate(){
                     )}
                 </div>
                 <div>
+                    <label>Image:</label>
+                    <input type='text' value={input.image} name='image' onChange={e=> handleChange(e)}/>
+                </div>
+                <div>
                     <label>Relased:</label>
                     <input type='date' value={input.relased} name='relased' onChange={e=> handleChange(e)}/>
                 </div>
                 <div>
                     <label>Rating:</label>
-                    <input type='number' value={input.rating} name='rating' onChange={e=> handleChange(e)}/>
+                    <input 
+                        type='number' 
+                        value={input.rating} 
+                        name='rating' 
+                        onChange={e=> handleChange(e)}/>
+                    {errors.rating && (
+                        <p className="error">{errors.rating}</p>
+                    )}
                 </div>
                 <div>
                     <label>Platforms:</label>
@@ -142,8 +157,8 @@ export default function GameCreate(){
                         return <option value={o.name}>{o.name}</option>
                     })}
                 </select>
-                <ul><li>{input.generos.map(e => e + ' ,')}</li></ul>
-                <button type="submit">Crear VideoJuego!</button>
+{/*                 <ul><li>{input.generos.map(e => e + ' ,')}</li></ul>
+ */}                <button type="submit">Crear VideoJuego!</button>
             </form>
             {input.generos.map(e =>
                 <div className="deleteGen">
