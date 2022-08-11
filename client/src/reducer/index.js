@@ -2,7 +2,7 @@ const initialState = {
     videogames: [],
     allVideogames: [],
     generos: [],
-    details: {}  
+    details: {}
 }
 
 function rootReducer (state = initialState, action) {
@@ -35,11 +35,11 @@ function rootReducer (state = initialState, action) {
         case "FILTER_GENERO":
             //console.log('filtered', action.payload)  SI TRAE EL GENERO
             var juegos = state.allVideogames.filter((game)=> {
-                 return game.generos.find((g)=> {
+                 return game.generos.find((g)=> {       //devuelve el primero que coincida
                     return action.payload === g
                     })
                 })
-            console.log(juegos) //OK, TRAE TODOS LOS JUEGOS FILTRADOS
+            //console.log(juegos) //OK, TRAE TODOS LOS JUEGOS FILTRADOS
             //console.log(action.payload)   es el genero
             return {
                 ...state,
@@ -48,16 +48,16 @@ function rootReducer (state = initialState, action) {
         case 'FILTER_CREATED':
             const allVideogames2 = state.allVideogames
             const createdFilter = action.payload === 'DB' ? 
-                                    allVideogames2.filter(e => (typeof e.id) === 'string') 
-                                    : allVideogames2.filter(e => !((typeof e.id) === 'string')) 
+                                    allVideogames2.filter(g => (typeof g.id) === 'string') 
+                                    : allVideogames2.filter(g => !((typeof g.id) === 'string')) 
             return{
                 ...state,
                 videogames: action.payload === 'ALL' ? state.allVideogames : createdFilter
             };
         case 'ORDER_NAME':
-        console.log(state.videogames)    
-        let sortedArr = action.payload === "A-Z" ?
-            //sort para comparar 2 valores de la function
+        //console.log(state.videogames)    
+        var sortedArr = action.payload === "A-Z" ?
+            //sort para comparar 2 valores de la function y toLowerCase para que los ponga en minuscula
                 state.videogames.sort(function(a, b) {
                     if(a.name.toLowerCase() > b.name.toLowerCase()) { return 1 };
                     if(b.name.toLowerCase() > a.name.toLowerCase()) { return -1 };
@@ -88,7 +88,12 @@ function rootReducer (state = initialState, action) {
             return {
                 ...state,
                 videogames: ratingArr
-            };    
+            };
+        case 'DETAIL2':
+            return{
+                ...state,
+                details: []
+            }   
 
         default:
             return state;
@@ -96,15 +101,3 @@ function rootReducer (state = initialState, action) {
 };
 
 export default rootReducer; 
-
-
-/*
-filtro si es string 
-let allGames = state.allGames;
-      let gamesFiltered =
-        allGames && allGames.filter((g) => g.genres.includes(action.payload));
-      return {
-        ...state,
-        games: gamesFiltered,
-      };
-*/

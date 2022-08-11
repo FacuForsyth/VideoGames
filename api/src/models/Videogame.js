@@ -7,9 +7,6 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-/*       validate: {
-        notNull: true,
-      } */
     },
     //un id nuevo para que no coincidan bd y api 
     id: {
@@ -29,23 +26,18 @@ module.exports = (sequelize) => {
     rating : {
       type: DataTypes.DECIMAL(4,2), // el numero decimal puede tener 4 dígitos como máximo y de esos 4 digitos 2 se encuentran después de la coma,
       allowNull: true,
-      /* validate: {
+      validate: {
         min: 0,
-        max: 10
-      } */
+        max: 5
+      }
     },
     image:{
       type: DataTypes.TEXT,
-      defaultValue: "https://img.freepik.com/vector-gratis/controles-videojuegos-estilo-neon-pared-ladrillo_24908-58916.jpg"
+      defaultValue: "https://images.pexels.com/photos/8885140/pexels-photo-8885140.jpeg?auto=compress"
     },
     platforms: {
-      type: DataTypes.STRING, //.ENUM('PC', 'Nintendo Switch', 'Xbox Series S/X', 'PlayStation 4', 'PlayStation 5')
+      type: DataTypes.ENUM('PC', 'Nintendo Switch', 'Xbox Series S/X', 'PlayStation 4', 'PlayStation 5'),
       allowNull: false,
-    },
-    createdInDb: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
     },
   },{timestamps: true,
     createdAt: 'creado',

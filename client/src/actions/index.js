@@ -17,7 +17,8 @@ export function getNameVideogames(name) {
     return async function(dispatch) {
         try{
             var nameVG = await axios.get(`http://localhost:3001/videogames?name=${name}`);
-                return dispatch({
+            //console.log('llega', name)    
+            return dispatch({
                     type: 'GET_NAME_VIDEOGAMES',
                     payload: nameVG.data
         });
@@ -42,9 +43,9 @@ export function getGeneros(){
 };
 
 export function postVideogame(payload) {
-    return async function(dispatch) {
+    return async function() {
         const resp = await axios.post(`http://localhost:3001/videogame`, payload);
-        console.log(resp)
+        //console.log(resp)
         return resp;
     }
 };
@@ -85,7 +86,7 @@ export function getDetails(id){
     return async function(dispatch){
         try{
             var info = await axios.get(`http://localhost:3001/videogames/${id}`);
-            console.log('esto es info:', info)
+            //console.log('esto es info:', info)
             return dispatch({
                 type: 'GET_DETAILS',
                 payload: info.data
@@ -94,4 +95,10 @@ export function getDetails(id){
             console.log(error)
         }
     }
-}; 
+};
+
+export function Detail2(){
+    return{
+        type: 'DETAIL2'
+    }
+};

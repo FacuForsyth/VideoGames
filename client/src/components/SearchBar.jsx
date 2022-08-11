@@ -7,6 +7,7 @@ export default function SearchBar() {
     const dispatch = useDispatch()
     const [name, setName] = useState('') //seteo en un array vacio
     //name es lo que esta tipeando el cliente
+    console.log(name)
 
     function handleInputChange(e){
         e.preventDefault()

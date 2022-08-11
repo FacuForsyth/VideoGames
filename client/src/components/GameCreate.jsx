@@ -3,6 +3,7 @@ import {Link, useHistory} from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 //importar la accion
 import { getGeneros, postVideogame } from "../actions";
+import '../css/validaciones.css';
 
 function validate(input){
     let errors = {};
@@ -34,7 +35,6 @@ export default function GameCreate(){
         relased: '', 
         rating: 0, 
         platforms: [],
-        //image: '',
         generos:[]
         
     });
@@ -51,7 +51,7 @@ export default function GameCreate(){
             [e.target.name] : e.target.value
         }))
     };
-    console.log(input) /////////////////
+    //console.log(input) /////////////////
     function handleCheck(e){
         if(e.target.checked){   //true o false
             setInput({
@@ -62,14 +62,17 @@ export default function GameCreate(){
         }
     };
     function handleSelect(e){
+        if(!input.generos.includes(e.target.value)){
         setInput({
             ...input,
             generos: [...input.generos, e.target.value] //trae lo que ya habia y concatena lo del target.value, es decir guarda en el arreglo generos todo lo que voy seleccionando
         })
+        }
     };
     function handleSubmit(e){
         e.preventDefault();
-        console.log(input) /////////////////////
+        //console.log(input) /////////////////////
+        validate(input)
         dispatch(postVideogame(input));
         alert('VideoJuego creado con exito');
         setInput({
@@ -78,10 +81,9 @@ export default function GameCreate(){
             relased: '', 
             rating: 0, 
             platforms: [],
-            //image: '',
             generos:[]
         })
-        //que pushee y cuando termine que me lleve al home  ES OPCIONAL - SACAR
+        //que pushee y cuando termine que me lleve al home
         history.push('/videogames')
     };
     function handleDelete(e){
@@ -154,12 +156,21 @@ export default function GameCreate(){
                 </div>
                 <select onChange={e=> handleSelect(e)}>
                     {generos.map((o) => {
-                        return <option value={o.name}>{o.name}</option>
+                        return <option key={o.name} value={o.name}>{o.name}</option>
                     })}
                 </select>
-{/*                 <ul><li>{input.generos.map(e => e + ' ,')}</li></ul>
- */}                <button type="submit">Crear VideoJuego!</button>
+                
+                <button type="submit" disabled={!input.name ||
+                                                    !input.descripcion ||
+                                                    !input.image ||
+                                                    input.rating > 5 ||
+                                                    input.rating < 0 ||
+                                                    !input.rating ||
+                                                    !input.relased ||
+                                                    input.generos.length < 1 ||
+                                                    input.platforms.length < 1 ? true : false}>Crear VideoJuego!</button>
             </form>
+            
             {input.generos.map(e =>
                 <div className="deleteGen">
                     <p>{e}</p>
@@ -169,10 +180,3 @@ export default function GameCreate(){
         </div>
     )
 };
-
-/* 
-                <div>
-                    <label>Image:</label>
-                    <input type='text' value={input.image} name='image' onChange={e=> handleChange(e)}/>
-                </div>
-*/

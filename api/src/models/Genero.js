@@ -8,12 +8,6 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-/*     id: { 
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        unique: true,
-    } */
     // no le paso a id por que la bd ya la genera.
   },{timestamps : false})
 };

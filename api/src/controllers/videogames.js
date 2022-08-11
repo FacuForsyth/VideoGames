@@ -1,13 +1,18 @@
 const axios = require('axios');
-const apiKey = '8e6a0d3d6edc487097d8fcc85b9e6b10'
+const API_KEY = process.env.DB_API_KEY;
 const { Genero, Videogame } = require('../db');
 
 
 //TRAIGO GAMES DE LA API
 const getAPI = async () => {
-    const videogames = await axios.get(`https://api.rawg.io/api/games?key=${apiKey}&page_size=100`);
-
-    const info = await videogames.data.results.map(i => {
+    let res = (await axios.get(`https://api.rawg.io/api/games?key=${API_KEY}`)).data;
+    let res1 = (await axios.get(`${res.next}`)).data;
+    let res2 = (await axios.get(`${res1.next}`)).data;
+    let res3 = (await axios.get(`${res2.next}`)).data;
+    let res4 = (await axios.get(`${res3.next}`)).data;
+    let videogames = [...res.results, ...res1.results, ...res2.results, ...res3.results, ...res4.results]
+ 
+    const info = videogames.map(i => {
         return {
             name: i.name,
             id: i.id, 
@@ -35,10 +40,6 @@ const getDB = async () => {
         },
     
     });
-    
-    /*infoDB.map((v) => {
-        return (v.dataValues['platforms'] = v.dataValues['platforms'].map((p) => p.dataValues.name));
-    }); */
     //mappear para que los generos me los devuelva en un array separados por string c/u
     infoDB.map((v) => {
         //console.log(v)
@@ -53,8 +54,7 @@ const getVideogames = async () => {
     const infoApi = await getAPI();
     const infoDB = await getDB();
     const informacion = infoDB.concat(infoApi);
-    console.log('Juegos guardados en DB')
     return informacion;
 };
 
-module.exports = {getVideogames}
+module.exports = {getVideogames, getDB}

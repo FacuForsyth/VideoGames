@@ -3,19 +3,24 @@ const { Router } = require('express');
 // Ejemplo: const authRouter = require('./auth.js');
 const { Genero, Videogame } = require('../db');
 const { getGeneroApi } = require('../controllers/generos');
-const { getVideogames } = require('../controllers/videogames');
+const { getVideogames, getDB } = require('../controllers/videogames');
+const { default: axios } = require('axios');
 const router = Router();
+const API_KEY = process.env.DB_API_KEY;
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
 
 router.get('/videogames', async (req, res) => {
-    const name = req.query.name     //buscar que exista un quere name en la url
+    const name = req.query.name     //buscar que exista un query name en la url
+    
     let videogamesT = await getVideogames();
+  try{
     if (name) {
         //filtro y veo si ese name que me pasan por query esta incluido
         //toLowerCase() para pasarlo a minuscula , asi compara los 2 valores en minuscula
-        let videogameName = await videogamesT.filter(i => i.name.toLowerCase().includes(name.toLowerCase()));
+        let videogameName = videogamesT.filter(i => i.name.toLowerCase().includes(name.toLocaleLowerCase()));
+        //console.log(videogameName)
         videogameName.length ? 
             res.status(200).send(videogameName) :
             res.status(404).send('No se encuentra el VideoJuego');
@@ -23,11 +28,14 @@ router.get('/videogames', async (req, res) => {
     else {
         res.status(200).send(videogamesT);
     }
+  } catch(e){
+    console.log(e);
+  }  
 });
 
 // CREAR JUEGO
-router.post('/videogames', async (req, res) => {
-    let { name, descripcion, relased, rating, image, createdInDb, platforms, generos } = req.body;
+router.post('/videogame', async (req, res) => {
+    let { name, descripcion, relased, rating, image, platforms, generos } = req.body;
     platforms = platforms.join(', ')
 
     try {
@@ -37,15 +45,15 @@ router.post('/videogames', async (req, res) => {
                 descripcion, 
                 relased, 
                 rating,
-                image,  //agregar en el req.body 
-                createdInDb, //tiene un defaultValue: true por eso la crea en true
+                image,
                 platforms,
             }
         })
         // por nombre
-         let generoDb = await Genero.findAll({
+         var generoDb = await Genero.findAll({
             where : {name : generos}
         });
+        //guardo la info en la tabla por el nombre
         await videogameCreated[0].addGenero(generoDb);
     } 
     catch (e) {
@@ -57,10 +65,36 @@ router.post('/videogames', async (req, res) => {
 //por ID
 router.get('/videogames/:id', async (req, res) => {
     const { id } = req.params;
-    const videogamesTotal = await getVideogames();
-    if(id) {
-        let gameId = await videogamesTotal.filter(i => i.id == id)
-        gameId.length ? res.status(200).json(gameId) : res.status(404).send('No se encontro el juego');
+    
+    if (id.includes('-')) {
+        let videogameDb = await Videogame.findOne({
+            where: {
+                id: id,
+            },
+            include: Genero
+        })
+        res.json(videogameDb)
+    } else {
+    try {
+    const i = await axios.get(`https://api.rawg.io/api/games/${id}?key=${API_KEY}`);
+    //console.log('esto es i:', i)
+    var a = i.data
+    //console.log('esto es a:', a);
+    const info = {
+            name: a.name,
+            id: a.id, 
+            relased: a.released,
+            rating: a.rating,
+            image: a.background_image,
+            descripcion: a.description,
+            generos: a.genres,
+            platforms: a.platforms.map(p => p.platform.name).join(', ')
+    }
+    res.status(200).json(info)
+    }
+    catch(e){
+        console.log(e)
+    }
     }
 });
 

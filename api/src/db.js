@@ -34,7 +34,7 @@ const { Videogame, Genero } = sequelize.models;
 
 // Aca vendrian las relaciones
 // Product.hasMany(Reviews);
-//relacion de tabla intermedia de (n - m)
+//relacion de tabla intermedia de (n - m) - creacion de la tabla "videogames_generos"
 Genero.belongsToMany(Videogame, {through: "videogames_generos"});
 Videogame.belongsToMany(Genero, {through: "videogames_generos"});
 

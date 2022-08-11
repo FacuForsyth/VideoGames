@@ -1,0 +1,6 @@
+.error{
+    color: red;
+    background-color: black;
+    font-size: 15px;
+    text-transform: uppercase;
+}

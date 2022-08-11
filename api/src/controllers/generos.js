@@ -1,11 +1,10 @@
 const axios = require('axios');
-const apiKey = '8e6a0d3d6edc487097d8fcc85b9e6b10';
+const API_KEY = process.env.DB_API_KEY;
 const {Genero} = require("../db.js")
 
-//router.get('/generos, async (req, res) => {  res.send(generosBD)})
 const getGeneroApi= async ()=> {
     try {
-        let generos = (await axios.get(`https://api.rawg.io/api/genres?key=${apiKey}`)).data.results.map(e=> e.name);
+        let generos = (await axios.get(`https://api.rawg.io/api/genres?key=${API_KEY}`)).data.results.map(e=> e.name);
         //console.log(generos) //[sport , card , car]
         generos.map(e=> {
             Genero.findOrCreate({

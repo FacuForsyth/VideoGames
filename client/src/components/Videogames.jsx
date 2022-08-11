@@ -12,66 +12,60 @@ import Paginado from "./Paginado";
 import SearchBar from "./SearchBar";
 
 export default function Videogames() {
-  //ir despachando las acciones
+  //ir despachando las acciones y cambiar un estado en el store de redux
   const dispatch = useDispatch();
   //traer todo lo que esta en el estado de videogames
   const allVideogames = useSelector((state) => state.videogames);
   const generos = useSelector((state) => state.generos);
   const [order, setOrder] = useState('')
+  
   //empieza en la pag
-  const [currentPage, setCurrentPage] = useState(1);
-      //console.log('curr:', currentPage)
-    //console.log('setcc:', setCurrentPage)
+  const [pageNumber, setPageNumer] = useState(1);
+    //console.log('curr:', pageNumber)
 
   //cuantos juegos por pagina
   const [videogamesPage] = useState(15);
   //indice para el ultimo juego
-  const indexOfLastVideogame = currentPage * videogamesPage; //15
-  const indexOfFirstVideogame = indexOfLastVideogame - videogamesPage; //0
+  const ultimoVideogame = pageNumber * videogamesPage; //15
+  const primerVideogame = ultimoVideogame - videogamesPage; //0
   const currentVideogames = allVideogames.slice(
-    indexOfFirstVideogame,
-    indexOfLastVideogame
+    primerVideogame,
+    ultimoVideogame
   );
 
-  const paginado = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const paginado = (num) => {
+    setPageNumer(num);
   };
 
   //component did mounth
   useEffect(() => {
     dispatch(getVideogames());
     dispatch(getGeneros());
-  }, [dispatch]);
-  //para el boton de resetear los videojuegos
-  function handleClick(e) {
-    e.preventDefault(); //para que no se rompa por las dudas
-    setCurrentPage(1);
-    dispatch(getVideogames());
-  };
+  }, [dispatch]);   //captura el estado actual -> cuando se hace un cambio
 
   function handleFilterCreated(e){
-    setCurrentPage(1);
+    setPageNumer(1);
     dispatch(filterCreated(e.target.value))  //value es el payload
 
   };
 
   function handleSort(e) {
-    e.preventDefault();
+    e.preventDefault();  //para que no se rompa por las dudas, cancela el evento si es cancelable sin detener lo otro
     dispatch(orderName(e.target.value))
-    setCurrentPage(1);  //setea para que empieze en la pagina 1
+    setPageNumer(1);  //setea para que empieze en la pagina 1
     setOrder(`Orden ${e.target.value}`)     //estado local para que lo setee
   }
 
   function handleRating(e) {
     e.preventDefault();
     dispatch(orderRating(e.target.value))
-    setCurrentPage(1);  //setea para que empieze en la pagina 1
+    setPageNumer(1);  //setea para que empieze en la pagina 1
     setOrder(`OrdenR ${e.target.value}`)     //estado local para que lo setee
   };
 
    function handleFilterGenero(e){
     e.preventDefault();
-    setCurrentPage(1);
+    setPageNumer(1);
     dispatch(filterGeneros(e.target.value))
   };
 
@@ -79,7 +73,6 @@ export default function Videogames() {
     <div>
       <Link to="/videogame">Crea tu Juego!</Link>
       <h1>JUEGOSTECA</h1>
-      <button onClick={e => handleClick(e)}>Volver a cargar videojuegos</button>
 
       <div className="filtros">
       <select onChange={e=> handleFilterGenero(e)}>
@@ -105,22 +98,23 @@ export default function Videogames() {
           videogamesPage={videogamesPage}
           allVideogames={allVideogames.length}
           paginado={paginado}
+          pageNumber={pageNumber}
         />
 
         <SearchBar/>
       </div>
 
-      <div className="games-div">
+      <div>
         {currentVideogames?.map((e) => {
           return (
-              <Link to={"/videogames/" + e.id}>
+              <Link key={e.id} to={`/videogames/${e.id}`}>
                 <Videogame
+                  id={e.id}
                   name={e.name}
                   image={e.image}
                   rating={e.rating}
                   relased={e.relased}
                   generos={e.generos.join(', ')}
-                  key={e.id}
                ></Videogame>
               </Link>
             
@@ -131,6 +125,3 @@ export default function Videogames() {
     </div>
   );
 };
-
-//PARA PONER UNA IMAGEN POR DEFAULT
-//e.image ? e.image : <img src="https://img.freepik.com/vector-gratis/controles-videojuegos-estilo-neon-pared-ladrillo_24908-58916.jpg"}
