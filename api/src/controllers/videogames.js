@@ -1,11 +1,11 @@
 const axios = require('axios');
-const API_KEY = process.env.DB_API_KEY;
+//const API_KEY = process.env.DB_API_KEY;
 const { Genero, Videogame } = require('../db');
 
 
 //TRAIGO GAMES DE LA API
 const getAPI = async () => {
-    let res = (await axios.get(`https://api.rawg.io/api/games?key=${API_KEY}`)).data;
+    let res = (await axios.get(`https://api.rawg.io/api/games?key=${process.env.DB_API_KEY}`)).data;
     let res1 = (await axios.get(`${res.next}`)).data;
     let res2 = (await axios.get(`${res1.next}`)).data;
     let res3 = (await axios.get(`${res2.next}`)).data;
