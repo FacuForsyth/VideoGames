@@ -3,19 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import axios from 'axios'
 import {Provider} from 'react-redux';
 import {store} from './store'
+import dotenv from "dotenv";
+dotenv.config();
 
+axios.defaults.baseURL = process.env.REACT_APP_API || "http://localhost:3001";
 
 ReactDOM.render(
-  <Provider store={store}>
-  
   <React.StrictMode>
-    <App />
+  <Provider store={store}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>, 
+  </Provider>
   </React.StrictMode>,
-  
-  </Provider>,
   document.getElementById('root')
 );
 
