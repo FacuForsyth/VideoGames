@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import Videogame from "./Videogame";
 import Paginado from "./Paginado";
 import SearchBar from "./SearchBar";
+import '../css/videogames.css'
+import '../css/cards.css'
 
 export default function Videogames() {
   //ir despachando las acciones y cambiar un estado en el store de redux
@@ -70,9 +72,17 @@ export default function Videogames() {
   };
 
   return (
-    <div>
-      <Link to="/videogame">Crea tu Juego!</Link>
-      <h1>JUEGOSTECA</h1>
+    <div className="home">
+      <div className="head">
+        <Link to="/videogame">Crea tu Juego!</Link>
+        <h1 className="titulo-pag">API DE VIDEOJUEGOS</h1>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h3 className="descripcion-pag">Bienvenidos a la web</h3>
+        <h3 className="descripcion-pag">con la ultima informacion sobre juegos</h3>
+      </div>
 
       <div className="filtros">
       <select onChange={e=> handleFilterGenero(e)}>
@@ -104,24 +114,23 @@ export default function Videogames() {
         <SearchBar/>
       </div>
 
-      <div>
+        <div className="cards">
         {currentVideogames?.map((e) => {
-          return (
-              <Link key={e.id} to={`/videogames/${e.id}`}>
-                <Videogame
-                  id={e.id}
-                  name={e.name}
-                  image={e.image}
-                  rating={e.rating}
-                  relased={e.relased}
-                  generos={e.generos.join(', ')}
-               ></Videogame>
-              </Link>
+          return ( 
             
-          );
-         })
+            <Videogame
+            id={e.id}
+            name={e.name}
+            image={e.image}
+            rating={e.rating}
+            relased={e.relased}
+            generos={e.generos.join(', ')}
+            ></Videogame>
+            
+            );
+          })
         }
+        </div>
       </div>
-    </div>
   );
 };
